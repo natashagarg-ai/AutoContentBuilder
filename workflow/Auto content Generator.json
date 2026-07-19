@@ -1,0 +1,492 @@
+{
+  "name": "Auto content Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        -32
+      ],
+      "id": "61994fee-835a-4d7d-aeed-a548ff06ee62",
+      "name": "Daily_Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1qVPu_V1RQO4OT4K5DVQTasta457bvvhw6KMwWMvlkB4",
+          "mode": "list",
+          "cachedResultName": "Auto content Generator",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qVPu_V1RQO4OT4K5DVQTasta457bvvhw6KMwWMvlkB4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Threads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qVPu_V1RQO4OT4K5DVQTasta457bvvhw6KMwWMvlkB4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json['Readable date'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweet 1",
+              "displayName": "Tweet 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweet 2",
+              "displayName": "Tweet 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweet 3",
+              "displayName": "Tweet 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweet 4",
+              "displayName": "Tweet 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweet 5",
+              "displayName": "Tweet 5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Twitter_Thread",
+              "displayName": "Twitter_Thread",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn_Post",
+              "displayName": "LinkedIn_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Instagram_caption",
+              "displayName": "Instagram_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hashtags",
+              "displayName": "Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image_Prompt",
+              "displayName": "Image_Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        144,
+        -32
+      ],
+      "id": "ec817792-92e2-42e3-b323-db38d1be7f1b",
+      "name": "Read_Banned",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OW2dssAUsV8nxdic",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\nconst recentTopics = items\n  .map(item => ({\n    date: new Date(item.json.Date || item.json.date || '2026-01-01'),\n    topic: item.json.Topic || item.json.topic || ''\n  }))\n  .filter(item => item.date >= sevenDaysAgo && item.topic.length > 3)\n  .map(item => item.topic.substring(0, 100));\nconst bannedTopics = [...new Set(recentTopics)].slice(0, 15);\nreturn [{\n  json: {\n    bannedTopics: bannedTopics,\n    bannedCount: bannedTopics.length,\n    bannedList: bannedTopics.join(' | ') || 'NONE_YET'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        -32
+      ],
+      "id": "0ff6896e-3279-4315-81aa-beec5bfde98f",
+      "name": "Filter_Banned"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemma-4-26b-a4b-it",
+          "mode": "list",
+          "cachedResultName": "models/gemma-4-26b-a4b-it"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are @AutoContentGen. Generate content for ONE specific AI/tech development.\n\nBANNED TOPICS: {{$json.bannedList}}\n\nOUTPUT AS VALID JSON ONLY - NO MARKDOWN, NO EXPLANATION:\n\n{\n  \"topic\": \"3-5 words\",\n  \"tweet1\": \"hook under 100 chars\",\n  \"tweet2\": \"insight under 200 chars\",\n  \"tweet3\": \"insight under 200 chars\",\n  \"tweet4\": \"insight under 200 chars\",\n  \"tweet5\": \"CTA under 150 chars\",\n  \"linkedin\": \"professional post 400-600 chars\",\n  \"instagram\": \"casual caption under 300 chars\",\n  \"hashtags\": \"3-5 hashtags\",\n  \"imagePrompt\": \"detailed image prompt 60-100 words\"\n}\n\nRULES:\n- Output ONLY the JSON object\n- No code blocks, no backticks\n- Real numbers, names, dates\n- Senior engineer tone\n- NO generic phrases\n\nCurrent date: July 15, 2026. Pick from June 20 - July 15, 2026."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "You write sharp, opinionated tech content. Every word earns its place. No filler."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        -32
+      ],
+      "id": "9b00ff71-7ba2-4502-9a25-6100e6142444",
+      "name": "Gemini_Generate_All",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zk0JtN3IQ8bydJhR",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.content?.parts?.[0]?.text || $json.text || '';\n\n// Extract JSON from response (remove any markdown code blocks if present)\nconst jsonMatch = text.match(/\\{[\\s\\S]*\\}/);\nconst jsonStr = jsonMatch ? jsonMatch[0] : text;\n\nlet data;\ntry {\n  data = JSON.parse(jsonStr);\n} catch (e) {\n  // Fallback if JSON parsing fails\n  return [{\n    json: {\n      topic: 'Parse Error',\n      tweet1: text.slice(0, 280),\n      tweet2: '',\n      tweet3: '',\n      tweet4: '',\n      tweet5: '',\n      twitterThread: text,\n      linkedin: '',\n      instagram: '',\n      hashtags: '',\n      imagePrompt: '',\n      rawText: text\n    }\n  }];\n}\n\nconst tweets = [data.tweet1, data.tweet2, data.tweet3, data.tweet4, data.tweet5].filter(t => t);\n\nreturn [{\n  json: {\n    topic: data.topic || '',\n    tweet1: data.tweet1 || '',\n    tweet2: data.tweet2 || '',\n    tweet3: data.tweet3 || '',\n    tweet4: data.tweet4 || '',\n    tweet5: data.tweet5 || '',\n    twitterThread: tweets.join('\\n\\n'),\n    linkedin: data.linkedin || '',\n    instagram: data.instagram || '',\n    hashtags: data.hashtags || '',\n    imagePrompt: data.imagePrompt || data.image_prompt || '',\n    rawText: text\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -32
+      ],
+      "id": "8b40dc12-6e07-45c2-aee9-34a9fc19fa64",
+      "name": "Parse_All"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1qVPu_V1RQO4OT4K5DVQTasta457bvvhw6KMwWMvlkB4",
+          "mode": "list",
+          "cachedResultName": "Auto content Generator",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qVPu_V1RQO4OT4K5DVQTasta457bvvhw6KMwWMvlkB4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Threads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qVPu_V1RQO4OT4K5DVQTasta457bvvhw6KMwWMvlkB4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{new Date().toISOString()}}",
+            "Topic": "={{$json.topic}}",
+            "Twitter_Thread": "={{$json.twitterThread}}",
+            "LinkedIn_Post": "={{$json.linkedin}}",
+            "Hashtags": "={{$json.hashtags}}",
+            "Image_Prompt": "={{$json.imagePrompt}}",
+            "Status": "Draft"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tweet 1",
+              "displayName": "Tweet 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tweet 2",
+              "displayName": "Tweet 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tweet 3",
+              "displayName": "Tweet 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tweet 4",
+              "displayName": "Tweet 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tweet 5",
+              "displayName": "Tweet 5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Twitter_Thread",
+              "displayName": "Twitter_Thread",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn_Post",
+              "displayName": "LinkedIn_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Instagram_caption",
+              "displayName": "Instagram_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hashtags",
+              "displayName": "Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image_Prompt",
+              "displayName": "Image_Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1104,
+        -32
+      ],
+      "id": "4a434b1d-2b79-41c2-8f9c-a3617c9e79f2",
+      "name": "Save_To_Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OW2dssAUsV8nxdic",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily_Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read_Banned",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read_Banned": {
+      "main": [
+        [
+          {
+            "node": "Filter_Banned",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter_Banned": {
+      "main": [
+        [
+          {
+            "node": "Gemini_Generate_All",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini_Generate_All": {
+      "main": [
+        [
+          {
+            "node": "Parse_All",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse_All": {
+      "main": [
+        [
+          {
+            "node": "Save_To_Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7f07696a-2767-4d2a-8631-43fa525b9073",
+  "meta": {
+    "instanceId": "b2cfe9ac90f813e7e2e906689c104fe9ce5d550d4650ca97e26fe107d38d2d6f"
+  },
+  "nodeGroups": [],
+  "id": "itWSPG9sLC4p7ffW",
+  "tags": []
+}
